@@ -6,7 +6,7 @@ from firebase_admin import firestore
 from firebase_admin import storage
 
 # Replace 'path/to/your/keyfile.json' with the actual path
-cred = credentials.Certificate('path/to/your/keyfile.json')
+cred = credentials.Certificate('secret.json')
 firebase_admin.initialize_app(cred)
 
 bucket = storage.bucket()
@@ -14,10 +14,12 @@ bucket = storage.bucket()
 app = Flask(__name__)
 
 @app.route('/get_data', methods=['GET'])
-def hello_world():
+def get_data():
     content = request.json
     prompt = content["prompt"]
     code_to_execute = f'python scripts/inference.py ../Open-Sora/configs/opensora-v1-2/inference/sample.py --num-frames 4s --resolution 240p --aspect-ratio 9:16 --llm-refine True --prompt "{prompt}"'
+    exec(code_to_execute)
+    
 
 if __name__ == '__main__':
-    app.run(host= '0.0.0.0',debug=True)    
+    app.run(host= '0.0.0.0',debug=True)
