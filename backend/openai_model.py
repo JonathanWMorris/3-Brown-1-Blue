@@ -14,7 +14,7 @@ def get_script(input: str):
         messages=[
             {
                 "role": "system",
-                "content": "You are an asistant that converts any queries about topics into a short (1 paragraph) story to show real life examples of concepts.",
+                "content": "You are an asistant that converts any queries about topics into a short (half paragraph) story to show real life examples of concepts.",
             },
             {
                 "role": "user",
@@ -34,7 +34,7 @@ def get_script(input: str):
         messages=[
             {
                 "role": "system",
-                "content": "You are an asistant that converts a story into a short screenplay. The duration of the screenplay should not be longer than 5 scenes. Only include a scene description for each secene and the dialog spoken at that scene, make the descriptions as generalizable as possible. Seperate description and dialog clearly. Lable dialog as either male or female only. Format the output as a Json.",
+                "content": "You are an asistant that converts a story into a short screenplay. The duration of the screenplay should not be longer than 4 scenes. Only include a scene description for each secene and the dialog spoken at that scene, make the descriptions as generalizable as possible. Seperate description and dialog clearly. Lable dialog as either male or female only. Format the output as a Json. Like this {'scenes' : [{'description' : 'text', 'dialog' : [{'male/female': 'text'}]}]}",
             },
             {
                 "role": "user",
@@ -47,6 +47,10 @@ def get_script(input: str):
 
     completion = response.parse()
     screenplay = completion.choices[0].message.content
+    screenplay = json.loads(screenplay)
+    
     print(" ")
-    print(json.loads(screenplay)['scenes'][0]['description'])
+    print(screenplay)
     print(" ")
+    
+    return screenplay
