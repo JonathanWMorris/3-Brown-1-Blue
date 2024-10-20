@@ -4,6 +4,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
 import os
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -20,7 +21,7 @@ def get_sora():
     content = request.json
     prompt = content["prompt"]
     
-    code_to_execute = f'python scripts/inference.py configs/opensora-v1-2/inference/sample.py --num-frames 4s --resolution 144p --aspect-ratio 9:16 --llm-refine True --prompt "{prompt}"'
+    code_to_execute = f'python scripts/inference.py configs/opensora-v1-2/inference/sample.py --num-frames 8s --resolution 100 --aspect-ratio 1:1 --llm-refine True --prompt "{prompt}"'
     # exec(code_to_execute)
     
     i = os.system(f"cd ../../Open-Sora && {code_to_execute}")
