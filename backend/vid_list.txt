@@ -1,8 +1,0 @@
-file samples/3.mp4
-file samples/0.mp4
-file samples/1.mp4
-file samples/2.mp4
-file samples/0_0000.mp4
-file samples/1_0000.mp4
-file samples/2_0000.mp4
-file samples/3_0000.mp4

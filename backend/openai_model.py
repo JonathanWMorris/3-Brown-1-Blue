@@ -14,7 +14,7 @@ def get_script(input: str):
         messages=[
             {
                 "role": "system",
-                "content": "You are an asistant that converts any queries about topics into a short (half paragraph) story to show real life examples of concepts.",
+                "content": "You are an asistant that ansers any querries like the transcript of educational videos on youtube, primerily the youtuber 3 blue 1 brown. Kepp your responses very brief and to the point but ilustrate the concept as a whole.",
             },
             {
                 "role": "user",
@@ -34,7 +34,7 @@ def get_script(input: str):
         messages=[
             {
                 "role": "system",
-                "content": "You are an asistant that converts a story into a short screenplay. The duration of the screenplay should not be longer than 4 scenes. Only include a scene description for each secene and the dialog spoken at that scene, make the descriptions as generalizable as possible. Seperate description and dialog clearly. Lable dialog as either male or female only. Format the output as a Json. Like this {'scenes' : [{'description' : 'text', 'dialog' : [{'male/female': 'text'}]}]}",
+                "content": "You are an asistant that converts text into a short screenplay by using the text as naration, similar to educational videos on youtube. The scenes should relate to real world concepts whenever possible. The duration of the screenplay should not be longer than 4 scenes. Only include a scene description for each secene and the dialog spoken at that scene, make the descriptions as generalizable as possible. Seperate description and dialog clearly. Lable dialog as either male or female only. Format the output as a Json. Like this {'scenes' : [{'description' : 'text', 'dialog' : [{'narrator': 'text'}]}]}",
             },
             {
                 "role": "user",
@@ -48,9 +48,9 @@ def get_script(input: str):
     completion = response.parse()
     screenplay = completion.choices[0].message.content
     screenplay = json.loads(screenplay)
-    
+
     print(" ")
     print(screenplay)
     print(" ")
-    
-    return screenplay
+
+    return screenplay, story
