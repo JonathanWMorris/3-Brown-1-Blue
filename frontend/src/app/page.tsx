@@ -71,13 +71,17 @@ export default function Home() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
+    const json = JSON.stringify({ input : prompt });
     try {
-      const response = await fetch('/backend/generate_video', {
+      const response = await fetch('https://39c4-146-244-204-32.ngrok-free.app/get_video', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Credentials': 'true',
         },
-        body: JSON.stringify({ prompt }),
+        body: json,
       });
       
       if (!response.ok) {
