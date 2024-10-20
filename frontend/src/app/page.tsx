@@ -1,78 +1,107 @@
-"use client"; 
+"use client";
 import React, { useState, FormEvent } from 'react';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import SendIcon from '@mui/icons-material/Send';
-import Box from '@mui/material/Box';
-
-interface ApiResponse {
-  status: string;
-  message: string;
-}
+import { ArrowRightIcon, MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 
 export default function Home() {
-  const [prompt, setPrompt] = useState<string>('');  // State for the prompt input
-  const [response, setResponse] = useState<ApiResponse | null>(null);  // State for the backend response
-  const [error, setError] = useState<string | null>(null);  // State for error handling
+  const [prompt, setPrompt] = useState<string>('');
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-
+    setIsLoading(true);
     try {
-      const res = await fetch(`/api/generate-video?prompt=${encodeURIComponent(prompt)}`, {
-        method: 'GET',
+      const response = await fetch('/backend/generate_video', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
       });
-      if (!res.ok) {
-        throw new Error('Failed to fetch data');
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-
-      const data: ApiResponse = await res.json();
-      setResponse(data);  // Set the response data from the Flask backend
-      setError(null);  // Clear any previous errors
+      
+      const data = await response.json();
+      setVideoUrl(data.videoUrl);
+      setPrompt('');
+      setIsLoading(false);
     } catch (error) {
-      setError('Failed to retrieve video. Please try again.');
-      setResponse(null);  // Clear any previous responses
+      console.error('Error:', error);
+      setIsLoading(false);
     }
+  };
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
   };
 
   return (
-    <main className="flex flex-col justify-between min-h-screen p-8 pb-20 sm:p-20 bg-gray-100">
-      <div className="flex-grow flex flex-col items-center justify-end w-full">
-        <Box
-          component="form"
-          sx={{ '& .MuiTextField-root': { m: 1, width: '75ch' } }}
-          noValidate
-          autoComplete="off"
-          onSubmit={handleSubmit}  // Form submission handler
+    <main className={`flex flex-col items-center justify-center min-h-screen p-4 transition-colors duration-300 ${
+      isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500'
+    }`}>
+      <div className={`relative w-full max-w-4xl ${
+        isDarkMode ? 'bg-gray-800' : 'bg-white bg-opacity-90'
+      } backdrop-blur-lg rounded-2xl shadow-2xl p-8 space-y-8`}>
+        <button
+          onClick={toggleDarkMode}
+          className="absolute top-4 right-4 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 ease-in-out"
         >
-          <div className="flex items-center">
-            <TextField
-              id="outlined-helperText"
-              label="Write a fun prompt"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              variant="outlined"
-              aria-label="message input"
-              fullWidth
-            />
-            <IconButton color="primary" aria-label="send message" sx={{ ml: 1 }} type="submit">
-              <SendIcon />
-            </IconButton>
-          </div>
-        </Box>
+          {isDarkMode ? (
+            <SunIcon className="h-6 w-6 text-yellow-400" />
+          ) : (
+            <MoonIcon className="h-6 w-6 text-gray-600" />
+          )}
+        </button>
 
-        {response && (
-          <div className="mt-4">
-            <p>Status: {response.status}</p>
-            <p>Message: {response.message}</p>
-          </div>
-        )}
+        <h1 className={`text-5xl font-extrabold text-center ${
+          isDarkMode ? 'text-white' : 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600'
+        }`}>
+          AI Video Generator
+        </h1>
+        
+        <div className="w-full aspect-video bg-gray-900 rounded-xl overflow-hidden shadow-lg">
+          {videoUrl ? (
+            <video src={videoUrl} controls className="w-full h-full object-cover">
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 text-xl font-semibold">
+              {isLoading ? "Generating your video..." : "Your video will appear here"}
+            </div>
+          )}
+        </div>
 
-        {error && (
-          <div className="mt-4 text-red-500">
-            <p>{error}</p>
-          </div>
-        )}
+        <form onSubmit={handleSubmit} className="flex items-center space-x-4">
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Describe the video you want to generate..."
+            className={`flex-grow p-4 ${
+              isDarkMode ? 'bg-gray-700 text-white' : 'bg-white bg-opacity-50'
+            } backdrop-blur-sm border-2 ${
+              isDarkMode ? 'border-gray-600' : 'border-purple-300'
+            } rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg placeholder-gray-500 transition duration-300 ease-in-out`}
+          />
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`p-4 ${
+              isLoading ? 'bg-gray-400' : isDarkMode ? 'bg-purple-700 hover:bg-purple-800' : 'bg-purple-600 hover:bg-purple-700'
+            } text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 ease-in-out transform hover:scale-105 disabled:hover:scale-100 disabled:opacity-50`}
+          >
+            {isLoading ? (
+              <svg className="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            ) : (
+              <ArrowRightIcon className="h-6 w-6" />
+            )}
+          </button>
+        </form>
       </div>
     </main>
   );
