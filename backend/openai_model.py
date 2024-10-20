@@ -14,7 +14,7 @@ def get_script(input: str):
         messages=[
             {
                 "role": "system",
-                "content": "You are an asistant that ansers any querries like the transcript of educational videos on youtube, primerily the youtuber 3 blue 1 brown. Kepp your responses very brief and to the point but ilustrate the concept as a whole.",
+                "content": "You are an assistant that answers any queries and responds like the transcript of educational videos on youtube, primarily the youtuber 3 blue 1 brown. Keep your responses very brief and to the point but illustrate the concept as a whole.",
             },
             {
                 "role": "user",
@@ -34,7 +34,7 @@ def get_script(input: str):
         messages=[
             {
                 "role": "system",
-                "content": "You are an asistant that converts text into a short screenplay by using the text as naration, similar to educational videos on youtube. The scenes should relate to real world concepts whenever possible. The duration of the screenplay should not be longer than 6 scenes. Only include a scene description for each secene and the dialog spoken at that scene, make the descriptions as generalizable as possible. Seperate description and dialog clearly. Lable dialog as either male or female only. Format the output as a Json. Like this {'scenes' : [{'description' : 'text', 'dialog' : [{'narrator': 'text'}]}]}",
+                "content": "You are an assistant that converts text into a short screenplay by using the text as narration, similar to educational videos on youtube. The scenes should relate to real world concepts whenever possible. The duration of the screenplay should not be longer than 6 scenes. Only include a scene description for each scene and the dialog spoken at that scene, make the descriptions as generalizable as possible. Separate description and dialog clearly. Format the output as a Json. Like this {'scenes' : [{'description' : 'text', 'dialog' : [{'narrator': 'text'}]}]}",
             },
             {
                 "role": "user",

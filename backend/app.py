@@ -40,42 +40,47 @@ def greet():
     return f"Hello, {name}!"
 
 
-@app.route("/get_video", methods=["POST"])
+@app.route("/get_video", methods=["POST", "GET"])
 @cross_origin(origin="*", headers=["Content-Type", "Authorization"])
 def get_video():
 
-    # os.system(f"rm -rf {merged}")
+    os.system(f"rm -rf {merged}")
 
-    # content = request.json
-    # input = content["input"]
+    content = request.json
+    input = content["input"]
     
-    # screenplay, story = get_script(input)
-    # scenes = screenplay["scenes"]
+    screenplay, story = get_script(input)
+    scenes = screenplay["scenes"]
 
-    # for i in range(len(scenes)):
-    #     scene = scenes[i]
-    #     description = scene["description"]
+    for i in range(len(scenes)):
+        scene = scenes[i]
+        description = scene["description"]
 
-    #     code_to_execute = f'python ../../Open-Sora/scripts/inference.py ../../Open-Sora/configs/opensora-v1-2/inference/sample.py --sample-name "{i}" --num-frames 4s --resolution 144p --aspect-ratio 9:16 --llm-refine False --prompt "{description}"'
+        code_to_execute = f'python ../../Open-Sora/scripts/inference.py ../../Open-Sora/configs/opensora-v1-2/inference/sample.py --sample-name "{i}" --num-frames 4s --resolution 144p --aspect-ratio 9:16 --llm-refine False --prompt "{description}"'
 
-    #     i = os.system(f"{code_to_execute}")
+        i = os.system(f"{code_to_execute}")
 
-    #     if i < 0:
-    #         return 400
+        if i < 0:
+            return 400
 
-    # folder_path = "samples/"
-    # print(get_files_os(folder_path))
-    # create_text_file(get_files_os(folder_path))
+    folder_path = "samples/"
+    print(get_files_os(folder_path))
+    create_text_file(get_files_os(folder_path))
 
-    # os.system(f"ffmpeg -f concat -i vid_list.txt {merged}")
-    # os.system(f"rm -rf samples vid_list.txt")
+    os.system(f"ffmpeg -f concat -i vid_list.txt {merged}")
+    os.system(f"rm -rf samples vid_list.txt")
     
-    # tts(story)
+    tts(story)
     
     output = combine_audio("./merged.mp4", "./speech.mp3")
 
     return send_from_directory("./", output)
 
+@app.route("/get_demo_video", methods=["POST", "GET"])
+@cross_origin(origin="*", headers=["Content-Type", "Authorization"])
+def get_demo_video():
+    return send_from_directory("./", "output.mp4")
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
