@@ -70,9 +70,9 @@ def get_video():
     # os.system(f"ffmpeg -f concat -i vid_list.txt {merged}")
     # os.system(f"rm -rf samples vid_list.txt")
     
-    # audio_path = tts(story)
+    # tts(story)
     
-    output = combine_audio(merged, audio_path)
+    output = combine_audio("./merged.mp4", "./speech.mp3")
 
     return send_from_directory("./", output)
 
