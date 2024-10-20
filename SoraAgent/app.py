@@ -1,25 +1,33 @@
-from flask import Flask, request
-import requests
+from flask import Flask, request, jsonify
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
+import os
 
 # Replace 'path/to/your/keyfile.json' with the actual path
 cred = credentials.Certificate('secret.json')
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred, {'storageBucket': 'nolan-d2ebf.appspot.com'})
 
 bucket = storage.bucket()
 
 app = Flask(__name__)
 
-@app.route('/get_data', methods=['GET'])
-def get_data():
+@app.route('/get_sora', methods=['GET'])
+def get_sora():
     content = request.json
     prompt = content["prompt"]
-    code_to_execute = f'python scripts/inference.py ../Open-Sora/configs/opensora-v1-2/inference/sample.py --num-frames 4s --resolution 240p --aspect-ratio 9:16 --llm-refine True --prompt "{prompt}"'
-    exec(code_to_execute)
     
+    code_to_execute = f'python scripts/inference.py configs/opensora-v1-2/inference/sample.py --num-frames 16s --resolution 144p --aspect-ratio 9:16 --llm-refine True --prompt "{prompt}"'
+    # exec(code_to_execute)
+    
+    i = os.system(f"cd ../../Open-Sora && {code_to_execute}")
+    
+    file_path = "../../Open-Sora/samples/samples/sample_0000.mp4"
+    blob = bucket.blob(file_path)
+    file_name = "vid.mp4"
+    blob.upload_from_filename(filename = file_name)
+    return jsonify(path=file_name)
 
 if __name__ == '__main__':
     app.run(host= '0.0.0.0',debug=True)
